@@ -1,0 +1,59 @@
+
+' constant declarations ------
+JumpLte r0 r0 start_program
+label zero
+0
+label one
+1
+label size_addr
+0
+label mem_start
+1
+
+' start ------
+' r0 = x 
+' r1 = y
+' r2 = size (first invalid address of memory, size + 2049)
+' r6 = 0	
+' r7 = 1
+
+
+label start_program
+Load r0 mem_start ' (x) r0 = 2049
+
+Load r2 size_addr
+LoadI r2 r2 ' size = m[2048]
+Add r2 r2 r0 ' size = size + x
+
+Load r6 zero
+Load r7 one
+
+'StoreI (dest) (value)
+'Store (value) (dest, constant)
+
+
+label start_x
+JumpLte r2 r0 out_loop ' exit if size <= x, equivalent to  while(x < size) {
+
+	Add r1 r0 r7 ' y = x + 1
+	label start_y
+	
+	JumpLte r2 r1 out_y ' exit size <= y, equivalent to while(y < size) {
+		LoadI r3 r0 ' r3 = m[x]
+		LoadI r4 r1 ' r4 = m[y]
+		Add r3 r3 r7 ' r3 = r3 + 1		
+		
+		JumpLte r3 r4 end_y_if ' don't swap if m[x]+1 <= y, equivalent to m[x] < m[y]; e.g. if(m[y] < m[x]) {
+			Sub r3 r3 r7 ' r3 = r3 - 1
+			StoreI r0 r4 ' m[x] = value(M[y])
+			StoreI r1 r3 ' m[y] = value(M[x])		
+			
+		label end_y_if
+		Add r1 r1 r7 'y++;
+	JumpLte r0 r0 start_y ' }
+	
+	label out_y
+	Add r0 r0 r7 ' x++;	
+JumpLte r0 r0 start_x ' }
+label out_loop
+Halt

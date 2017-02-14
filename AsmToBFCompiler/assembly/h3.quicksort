@@ -1,0 +1,122 @@
+#define lll r0
+#define rrr r1
+#define ppp r2
+#define position r3
+#define temp1 r4
+#define temp2 r5
+#define temp3 r6
+#define temp4 r7
+
+
+JumpLte r0 r0 start_program
+
+label PositionStartAddress
+256
+label SizeAddress
+2048
+
+label partition_loop_start
+	Mult temp2 rrr ppp
+	Sub  temp1 lll ppp
+
+label the_first_while
+	LoadI temp3 rrr
+	Sub temp4 temp3 ppp
+	Add temp1 temp1 ppp
+	LoadI temp3 temp1
+	JumpLte temp3 temp4 the_first_while
+	
+label the_second_while
+	Sub temp2 temp2 ppp
+	LoadI temp3 rrr
+	LoadI temp4 temp2
+
+	JumpLte temp4 temp3 the_condition
+	JumpLte temp2 lll j_le_l
+	JumpLte ppp ppp the_second_while
+
+label j_le_l
+	JumpLte lll temp2 the_condition
+	JumpLte lll lll the_second_while
+
+label the_condition
+	JumpLte temp2 temp1 partition_loop_end
+
+	LoadI temp3 temp1
+	LoadI temp4 temp2
+	StoreI temp1 temp4
+	StoreI temp2 temp3
+
+	JumpLte temp1 temp1 the_first_while
+
+label partition_loop_end
+	LoadI temp4 temp1
+	LoadI temp3 rrr
+	StoreI temp1 temp3
+	StoreI rrr temp4
+
+	Sub temp2 temp1 lll
+	Add temp2 temp2 ppp
+	Sub temp3 rrr temp1
+
+	JumpLte temp2 temp3 push
+	
+	StoreI position lll
+	Add position position ppp
+	Sub temp1 temp1 ppp
+	StoreI position temp1
+	Add position position ppp
+	Add temp1 temp1 ppp
+
+label push
+	Add temp1 temp1 ppp
+	StoreI position temp1
+	Add position position ppp
+	Sub temp1 temp1 ppp
+	StoreI position rrr
+	Add position position ppp
+
+	Sub temp2 temp1 lll
+	Sub temp3 rrr temp1
+	JumpLte temp3 temp2 the_big_while
+
+	StoreI position lll
+	Add position position ppp
+	Sub temp1 temp1 ppp
+	StoreI position temp1
+	Add position position ppp
+
+label the_big_while
+	Load temp1 PositionStartAddress
+	Sub temp2 position temp1
+	JumpLte temp2 ppp finished
+
+	Sub position position ppp
+	LoadI rrr position
+	Sub position position ppp
+	LoadI lll position
+
+	JumpLte rrr lll the_big_while
+	JumpLte temp1 temp1 partition_loop_start
+
+label finished
+	Halt
+
+label start_program
+	Load temp1 SizeAddress
+	Load ppp One
+	Add lll temp1 ppp
+	Load position PositionStartAddress
+	LoadI temp4 temp1
+	Add rrr temp4 lll
+	Sub rrr rrr ppp
+
+	StoreI position lll
+	Add position position ppp
+	StoreI position rrr
+	Add position position ppp
+
+	JumpLte rrr rrr the_big_while
+
+label One
+1

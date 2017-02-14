@@ -1,0 +1,54 @@
+
+LoadI Function:
+
+// M[dest] <-- value
+Input: 
+	pointer - The register that contains a memory address
+	dest - The register in which to store the contents of the above memory address
+
+Load Variables:
+
+	memoryPointer - The position in memory from pointer, which is the position in memory to load
+
+Jump Variables:
+	memoryRW - AsmMemoryMap.MEMORY_RW_WRITE
+	FuncVal - Load Function
+	MemNextFuncVal - The next block after the load
+
+	pointerCopy - The contents of the memory address from memoryPointer will be stored in here, to be copied into the appropriate register
+
+Algorithm:
+	- Downconvert the contents of the source register and store in memoryPointer
+	- set memoryRW, funcVal and nextFuncVal
+	- (the load function tree will then store the value from that memory address in pointerCopy)
+	- Add an instruction to the next block to copy the value from pointerCopy, to the target 	register
+
+----------------------
+
+Store Function:
+
+// M[dest] <-- value
+Input: 
+	value - The value to be stored in memory
+	dest - The position in memory to place the above value
+
+
+Store Variables:
+
+	pointerCopy - The value to be stored in meomry
+	memoryPointer - The position in memory to place the above value
+
+Jump Variables:
+	memoryRW - AsmMemoryMap.MEMORY_RW_WRITE
+	FuncVal - Store Function
+	MemNextFuncVal - The next block after the store
+
+Algorithm:
+	- MCopy value to pointerCopy
+	- Down convert the dest to I-level and store in memory pointer
+	- Set memoryRW, FuncVall, and MemNextFuncVal
+	- Branch.	
+
+----------------------
+
+
